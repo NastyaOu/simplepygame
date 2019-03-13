@@ -75,7 +75,7 @@ while mainLoop:
                 allplayers.append(enemy6)
 
         ticks = pygame.time.get_ticks()
-        score = int(ticks / 1000 % 60)
+        score = int(ticks / 1000)
         scoretext = scorefont.render(str(score), True, (255, 255, 255))
 
         screen.blit(back, (0, 0))
