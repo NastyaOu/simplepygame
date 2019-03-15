@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 from pygame.locals import *
 
 
@@ -36,11 +37,10 @@ font = pygame.font.Font(None, 25)
 scorefont = pygame.font.Font(None, 60)
 score = 0
 gameovercheck = False
+time0 = time.time()
 
 player = Person(100, 300, 2, 'player.png')
-enemy1 = Person(1000, 200, 0.5, 'enemy.png')
-enemy2 = Person(1000, 400, 1, 'enemy.png')
-allplayers = [player, enemy1, enemy2]
+allplayers = [player]
 
 abouttext = font.render("GitHub: stepigor. Version 1.0.", True, (255, 255, 255))
 
@@ -48,7 +48,16 @@ mainLoop = True
 while mainLoop:
 
     if gameovercheck == False:
-
+        
+        if score == 5:
+            try:
+                enemy1
+                enemy2
+            except:
+                enemy1 = Person(1000, 200, 0.5, 'enemy.png')
+                enemy2 = Person(1000, 400, 1, 'enemy.png')
+                allplayers.append(enemy1)
+                allplayers.append(enemy2)
         if score == 30:
             try:
                 enemy3
@@ -74,8 +83,8 @@ while mainLoop:
                 enemy6 = Person(random.randint(0, 1200), random.randint(0, 650), random.randint(2, 5), 'enemy.png')
                 allplayers.append(enemy6)
 
-        ticks = pygame.time.get_ticks()
-        score = int(ticks / 1000)
+        time1 = time.time()
+        score = int(time1 - time0)
         scoretext = scorefont.render(str(score), True, (255, 255, 255))
 
         screen.blit(back, (0, 0))
@@ -102,6 +111,39 @@ while mainLoop:
 
         screen.blit(gameover, (0, 0))
         screen.blit(scoretext, (122, 400))
+        
+        key_press = pygame.key.get_pressed()
+        
+        if key_press[K_RETURN]:
+            time0=time.time()
+            time1=time.time()
+            score = 0
+            try:
+                del enemy1
+            except:
+                pass
+            try:
+                del enemy2
+            except:
+                pass
+            try:
+                del enemy3
+            except:
+                pass
+            try:
+                del enemy4
+            except:
+                pass
+            try:
+                del enemy5
+            except:
+                pass
+            try:
+                del enemy6
+            except:
+                pass
+            allplayers = [player]
+            gameovercheck = False
 
     for event in pygame.event.get():
         if event.type == QUIT:
