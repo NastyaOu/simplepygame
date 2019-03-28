@@ -28,7 +28,7 @@ class Person:
 
 
 pygame.init()
-screen = pygame.display.set_mode((1280, 720), 0, 32)
+screen = pygame.display.set_mode((1000, 500), 0, 32)
 pygame.display.set_caption("First Python Game!")
 back = pygame.image.load('back.png')
 gameover = pygame.image.load('gameover.png')
@@ -54,33 +54,33 @@ while mainLoop:
                 enemy1
                 enemy2
             except:
-                enemy1 = Person(1000, 200, 0.5, 'enemy.png')
-                enemy2 = Person(1000, 400, 1, 'enemy.png')
+                enemy1 = Person(800, 200, 0.5, 'enemy.png')
+                enemy2 = Person(800, 300, 1, 'enemy.png')
                 allplayers.append(enemy1)
                 allplayers.append(enemy2)
         if score == 30:
             try:
                 enemy3
             except:
-                enemy3 = Person(random.randint(0, 1200), random.randint(0, 650), 1, 'enemy.png')
+                enemy3 = Person(random.randint(0, 900), random.randint(0, 400), 1, 'enemy.png')
                 allplayers.append(enemy3)
         if score == 50:
             try:
                 enemy4
             except:
-                enemy4 = Person(random.randint(0, 1200), random.randint(0, 650), random.randint(1, 2), 'enemy.png')
+                enemy4 = Person(random.randint(0, 900), random.randint(0, 400), random.randint(1, 2), 'enemy.png')
                 allplayers.append(enemy4)
         if score == 70:
             try:
                 enemy5
             except:
-                enemy5 = Person(random.randint(0, 1200), random.randint(0, 650), random.randint(1, 3), 'enemy.png')
+                enemy5 = Person(random.randint(0, 900), random.randint(0, 400), random.randint(1, 3), 'enemy.png')
                 allplayers.append(enemy5)
         if score == 100:
             try:
                 enemy6
             except:
-                enemy6 = Person(random.randint(0, 1200), random.randint(0, 650), random.randint(2, 5), 'enemy.png')
+                enemy6 = Person(random.randint(0, 900), random.randint(0, 400), random.randint(2, 5), 'enemy.png')
                 allplayers.append(enemy6)
 
         time1 = time.time()
@@ -95,17 +95,17 @@ while mainLoop:
                 item.move()
 
         keys_pressed = pygame.key.get_pressed()
-        if keys_pressed[K_d] and player.x < 1216:
+        if keys_pressed[K_d] and player.x < 936:
             player.x += player.speed
         if keys_pressed[K_a] and player.x > 0:
             player.x -= player.speed
         if keys_pressed[K_w] and player.y > 0:
             player.y -= player.speed
-        if keys_pressed[K_s] and player.y < 656:
+        if keys_pressed[K_s] and player.y < 436:
             player.y += player.speed
 
-        screen.blit(abouttext, (3, 695))
-        screen.blit(scoretext, (1200, 15))
+        screen.blit(abouttext, (3, 475))
+        screen.blit(scoretext, (920, 15))
 
     else:
 
