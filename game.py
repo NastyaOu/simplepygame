@@ -57,7 +57,7 @@ while mainLoop:
                 enemy1
                 enemy2
             except:
-                enemy1 = Person(800, 200, 0.5, 'enemy.png')
+                enemy1 = Person(800, 200, 1, 'enemy.png')
                 enemy2 = Person(800, 300, 1, 'enemy.png')
                 allplayers.append(enemy1)
                 allplayers.append(enemy2)
