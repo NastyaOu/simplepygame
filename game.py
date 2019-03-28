@@ -39,7 +39,10 @@ score = 0
 gameovercheck = False
 time0 = time.time()
 
-player = Person(100, 300, 2, 'player.png')
+enemynum = 3
+lastadd = 0
+
+player = Person(100, 300, 3, 'player.png')
 allplayers = [player]
 
 abouttext = font.render("GitHub: stepigor. Version 1.0.", True, (255, 255, 255))
@@ -58,30 +61,15 @@ while mainLoop:
                 enemy2 = Person(800, 300, 1, 'enemy.png')
                 allplayers.append(enemy1)
                 allplayers.append(enemy2)
-        if score == 30:
+
+        if score > 29 and score % 30 == 0 and score != lastadd:
             try:
-                enemy3
-            except:
-                enemy3 = Person(random.randint(0, 900), random.randint(0, 400), 1, 'enemy.png')
-                allplayers.append(enemy3)
-        if score == 50:
-            try:
-                enemy4
-            except:
-                enemy4 = Person(random.randint(0, 900), random.randint(0, 400), random.randint(1, 2), 'enemy.png')
-                allplayers.append(enemy4)
-        if score == 70:
-            try:
-                enemy5
-            except:
-                enemy5 = Person(random.randint(0, 900), random.randint(0, 400), random.randint(1, 3), 'enemy.png')
-                allplayers.append(enemy5)
-        if score == 100:
-            try:
-                enemy6
-            except:
-                enemy6 = Person(random.randint(0, 900), random.randint(0, 400), random.randint(2, 5), 'enemy.png')
-                allplayers.append(enemy6)
+                globals()['enemy' + str(enemynum)]
+            except KeyError:
+                globals()['enemy' + str(enemynum)] = Person(random.randint(0,900),random.randint(0,400),random.randint(1,2),'enemy.png');
+                allplayers.append(globals()['enemy' + str(enemynum)])
+                enemynum+=1
+                lastadd = score
 
         time1 = time.time()
         score = int(time1 - time0)
@@ -118,30 +106,10 @@ while mainLoop:
             time0=time.time()
             time1=time.time()
             score = 0
-            try:
-                del enemy1
-            except:
-                pass
-            try:
-                del enemy2
-            except:
-                pass
-            try:
-                del enemy3
-            except:
-                pass
-            try:
-                del enemy4
-            except:
-                pass
-            try:
-                del enemy5
-            except:
-                pass
-            try:
-                del enemy6
-            except:
-                pass
+            for i in range(1,enemynum):
+                del globals()['enemy'+str(i)]
+            lastadd = 0
+            enemynum = 3
             allplayers = [player]
             gameovercheck = False
 
