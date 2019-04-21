@@ -28,7 +28,7 @@ class Person:
 
 
 pygame.init()
-screen = pygame.display.set_mode((1000, 500), 0, 32)
+screen = pygame.display.set_mode((1280, 720), 0, 32)
 pygame.display.set_caption("First Python Game!")
 back = pygame.image.load('back.png')
 gameover = pygame.image.load('gameover.png')
@@ -42,7 +42,7 @@ time0 = time.time()
 enemynum = 3
 lastadd = 0
 
-player = Person(100, 300, 3, 'player.png')
+player = Person(100, 320, 3, 'player.png')
 allplayers = [player]
 
 abouttext = font.render("GitHub: stepigor. Version 1.0.", True, (255, 255, 255))
@@ -57,8 +57,8 @@ while mainLoop:
                 enemy1
                 enemy2
             except:
-                enemy1 = Person(800, 200, 1, 'enemy.png')
-                enemy2 = Person(800, 300, 1, 'enemy.png')
+                enemy1 = Person(1000, 250, 1, 'enemy.png')
+                enemy2 = Person(1000, 500, 1, 'enemy.png')
                 allplayers.append(enemy1)
                 allplayers.append(enemy2)
 
@@ -66,7 +66,7 @@ while mainLoop:
             try:
                 globals()['enemy' + str(enemynum)]
             except KeyError:
-                globals()['enemy' + str(enemynum)] = Person(random.randint(0,900),random.randint(0,400),random.randint(1,2),'enemy.png');
+                globals()['enemy' + str(enemynum)] = Person(random.randint(0,1200),random.randint(0,650),random.randint(1,2),'enemy.png');
                 allplayers.append(globals()['enemy' + str(enemynum)])
                 enemynum+=1
                 lastadd = score
@@ -83,17 +83,17 @@ while mainLoop:
                 item.move()
 
         keys_pressed = pygame.key.get_pressed()
-        if keys_pressed[K_d] and player.x < 936:
+        if keys_pressed[K_d] and player.x < 1216:
             player.x += player.speed
         if keys_pressed[K_a] and player.x > 0:
             player.x -= player.speed
         if keys_pressed[K_w] and player.y > 0:
             player.y -= player.speed
-        if keys_pressed[K_s] and player.y < 436:
+        if keys_pressed[K_s] and player.y < 656:
             player.y += player.speed
 
-        screen.blit(abouttext, (3, 475))
-        screen.blit(scoretext, (920, 15))
+        screen.blit(abouttext, (3, 695))
+        screen.blit(scoretext, (1200, 15))
 
     else:
 
