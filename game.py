@@ -1,17 +1,17 @@
-import pygame #сама игровая библиотека
-import random #получаем случайные числа (при генерации новых противников)
-import time #модуль подсчета времени для игровых очков
+import pygame
+import random
+import time
 from pygame.locals import *
 
 
-class Person: #к данному классу относятся и САМ ИГРОК и ПРОТИВНИКИ (НО только ПРОТИВНИКИ используют МЕТОД MOVE!)
+class Person: #описание класса игрового объекта
     def __init__(self, x, y, speed, image):
         self.x = x
         self.y = y
         self.speed = speed
         self.image = pygame.image.load(image)
 
-    def move(self): #ТОЛЬКО ДЛЯ ПРОТИВНИКОВ! ПЕРЕДВИЖЕНИЕ ПРОТИВНИКА СО СРАВНЕНИЕМ ПОЛОЖЕНИЯ ИГРОКА
+    def move(self): #метод преследования игрока
         if self.x < player.x:
             self.x += self.speed
         elif self.x > player.x:
@@ -21,9 +21,10 @@ class Person: #к данному классу относятся и САМ ИГ�
         elif self.y > player.y:
             self.y -= self.speed
 
+        #проверка окончания игры
         global gameovercheck
-
-        if self.x <= player.x + 64 and self.x >= player.x and self.y >= player.y and self.y <= player.y + 64: #УСЛОВИЕ ПРЕКРАЩЕНИЯ ИГРЫ, ПРОИГРЫЩ
+        #проверка столкновения
+        if self.x <= player.x + 64 and self.x >= player.x and self.y >= player.y and self.y <= player.y + 64:
             gameovercheck = True
             screen.blit(gameover, (0, 0))
 
@@ -32,7 +33,7 @@ class Person: #к данному классу относятся и САМ ИГ�
             screen.blit(gameover, (0, 0))
 
 
-pygame.init()   #СТАРТ, ИНИЦИАЛИЗАЦИЯ
+pygame.init()   #инициализация игры, отрисовка окна
 screen = pygame.display.set_mode((1280, 720), 0, 32)
 pygame.display.set_caption("First Python Game!")
 back = pygame.image.load('back.png')
@@ -40,35 +41,36 @@ gameover = pygame.image.load('gameover.png')
 
 font = pygame.font.Font(None, 25)
 scorefont = pygame.font.Font(None, 60)
-score = 0   #ИГРОВЫЕ ОЧКИ
-gameovercheck = False #БУЛЕВО ЗНАЧЕНИЕ, ПРОИГРАЛИ ИЛИ НЕТ
-time0 = time.time() #СЧЕТ ВРЕМЕНИ, ДЛЯ ИГРОВЫХ ОЧКОВ
+score = 0   #количество очков
+gameovercheck = False #окончание игры
+time0 = time.time()
 
-enemynum = 3 #НОМЕР СЛЕДУЮЩЕГО ПРОТИВНИКА (ДЛЯ ГЕНЕРАЦИИ)
-lastadd = 0 #КАКОГО ПРОТИВНИКА ДОБАВЛЯЛИ ПОСЛЕДНИЙ РАЗ
+enemynum = 3
+lastadd = 0
 
-player = Person(100, 320, 4, 'player.png') #САМ ИГРОК (X,Y, СКОРОСТЬ, ТЕКСТУРА)
-allplayers = [player] #СПИСОК, ПО НЕМУ БУДЕМ ПРОХОДИТСЯ В БЕСКОНЕЧНОМ ИГРОВОМ ЦИКЛЕ, ЧТОБЫ ВСЕ ПРОТИВНИКИ ДВИГАЛИСЬ, А ИГРОК ОТОБРАЖАЛСЯ
+player = Person(100, 320, 4, 'player.png') #инициализация игрока
+allplayers = [player] #список игровых объектов
 
 abouttext = font.render("GitHub: stepigor. Version 1.0.", True, (255, 255, 255))
 
 mainLoop = True
-while mainLoop: #БЕСКОНЕЧНЫЙ ИГРОВОЙ ЦИКЛ
+while mainLoop: #игровой цикл
 
-    if gameovercheck == False: #ЕСЛИ НЕ ПРОИГРАЛИ
+    if gameovercheck == False:
         
-        if score == 5: #ВРЕМЯ ПОЯВЛЕНИЯ ПЕРВЫХ ПРОТИВНИКОВ
-            try: #ИСПОЛЬЗУЕМ ДАННУЮ КОНСТРУКЦИЮ, ЧТОБЫ БЫТЬ УВЕРЕННЫМИ, ЧТО МЫ ЕЩЕ НЕ СОЗДАВАЛИ ПРОТИВНИКОВ, ИНАЧЕ ЗА ОДНУ СЕКУНДУ ПОЛЕ ЗАПОЛНИТСЯ ПРОТИВНИКАМИ
+        if score == 5:
+            try:
                 enemy1
                 enemy2
             except:
+                #создание первых противников
                 enemy1 = Person(1000, 250, random.randint(0,3), 'enemy.png')
                 enemy2 = Person(1000, 500, random.randint(0,3), 'enemy.png')
-                allplayers.append(enemy1) #ДОБАВЛЯЕМ В ТОТ САМЫЙ СПИСОК, ЧТО БЫЛ ВЫШЕ
+                allplayers.append(enemy1)
                 allplayers.append(enemy2)
 
-        if score > 29 and score % 30 == 0 and score != lastadd: #СЛЕДУЮЩИЕ ПРОТИВНИКИ, КАЖДЫЕ 30 ОЧКОВ
-            try: #ИСПОЛЬЗУЕМ ДАННУЮ КОНСТРУКЦИЮ, ЧТОБЫ БЫТЬ УВЕРЕННЫМИ, ЧТО МЫ ЕЩЕ НЕ СОЗДАВАЛИ ПРОТИВНИКОВ, ИНАЧЕ ЗА ОДНУ СЕКУНДУ ПОЛЕ ЗАПОЛНИТСЯ ПРОТИВНИКАМИ
+        if score > 29 and score % 30 == 0 and score != lastadd: #добавление противников каждые 30 очков
+            try:
                 globals()['enemy' + str(enemynum)]
             except KeyError:
                 globals()['enemy' + str(enemynum)] = Person(random.randint(0,1200),random.randint(0,650),random.randint(0,3),'enemy.png');
@@ -76,18 +78,20 @@ while mainLoop: #БЕСКОНЕЧНЫЙ ИГРОВОЙ ЦИКЛ
                 enemynum+=1
                 lastadd = score
 
-        time1 = time.time() #ВТОРОЕ ВРЕМЯ, ЧТОБЫ ВЫЧЕТОМ ПОЛУЧИТЬ АКТУАЛЬНЫЕ ОЧКИ (БЫЛ TIME0 ЕЩЕ)
+        #вычисление количества очков
+        time1 = time.time()
         score = int(time1 - time0)
         scoretext = scorefont.render(str(score), True, (255, 255, 255))
 
         screen.blit(back, (0, 0))
-
-        for i, item in enumerate(allplayers): #ПРОХОДИМСЯ ПО СПИСКУ, ЧТО БЫЛ ВЫШЕ (ГДЕ САМ ИГРОК И ПРОТИВНИКИ)
+        #отрисовка игровых объектов
+        for i, item in enumerate(allplayers):
             screen.blit(item.image, (item.x, item.y))
-            if i != 0: #ИСКЛЮЧАЕМ ИГРОКА (У НЕГО ID В СПИСКЕ 0), ТАК КАК ИМ УПРАВЛЯЕМ САМ ЧЕЛОВЕК, А НЕ КОМПЬЮТЕР
+            if i != 0:
                 item.move()
 
-        keys_pressed = pygame.key.get_pressed() #ПЕРЕДВИЖЕНИЕ ГЛАВНОГО ГЕРОЯ
+        #управление персонажем
+        keys_pressed = pygame.key.get_pressed()
         if keys_pressed[K_d] and player.x < 1216:
             player.x += player.speed
         if keys_pressed[K_a] and player.x > 0:
@@ -100,14 +104,14 @@ while mainLoop: #БЕСКОНЕЧНЫЙ ИГРОВОЙ ЦИКЛ
         screen.blit(abouttext, (3, 695))
         screen.blit(scoretext, (1200, 15))
 
-    else: #ЕСЛИ ПРОИГРАЛИ
-
+    else:
+        #отрисовка проигрыша
         screen.blit(gameover, (0, 0))
         screen.blit(scoretext, (122, 400))
         
         key_press = pygame.key.get_pressed()
-        
-        if key_press[K_RETURN]: #НАЖИМАЕМ ENTER, ЧТОБЫ НАЧАТЬ СНАЧАЛА. ОБНУЛЯЕМ СЧЕТА, УДАЛЯЕМ ПРОТИВНИКОВ
+        #новая игра
+        if key_press[K_RETURN]:
             time0=time.time()
             time1=time.time()
             score = 0
@@ -118,10 +122,10 @@ while mainLoop: #БЕСКОНЕЧНЫЙ ИГРОВОЙ ЦИКЛ
             allplayers = [player]
             gameovercheck = False
 
-    for event in pygame.event.get(): #УСЛОВИЕ НОРМАЛЬНОГО ЗАКРЫТИЯ ИГРЫ НА КРЕСТИК В WINDOWS
+    for event in pygame.event.get():
         if event.type == QUIT:
             mainLoop = False
 
     pygame.display.update()
 
-pygame.quit() #САМ ВЫХОД ИЗ ИГРЫ. НАХОДИТСЯ ВНЕ ИГРОВОГО ЦИКЛА, КОТОРЫЙ ПРЕРЫВАЕТСЯ В GAMEOVER (ПРИ НАЖАТИИ ENTER)
+pygame.quit()
