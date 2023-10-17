@@ -27,7 +27,6 @@ class Person: #описание класса игрового объекта
         if self.x <= player.x + 64 and self.x >= player.x and self.y >= player.y and self.y <= player.y + 64:
             gameovercheck = True
             screen.blit(gameover, (0, 0))
-
         if self.x+64 <= player.x + 64 and self.x+64 >= player.x and self.y+64 >= player.y and self.y+64 <= player.y + 64:
             gameovercheck = True
             screen.blit(gameover, (0, 0))
@@ -48,7 +47,7 @@ time0 = time.time()
 enemynum = 3
 lastadd = 0
 
-player = Person(100, 320, 4, 'player.png') #инициализация игрока
+player = Person(100, 320, 5, 'player.png') #инициализация игрока
 allplayers = [player] #список игровых объектов
 
 abouttext = font.render("GitHub: stepigor. Version 1.0.", True, (255, 255, 255))
@@ -58,24 +57,24 @@ while mainLoop: #игровой цикл
 
     if gameovercheck == False:
         
-        if score == 5:
+        if score == 3:
             try:
                 enemy1
                 enemy2
             except:
                 #создание первых противников
-                enemy1 = Person(1000, 250, random.randint(0,3), 'enemy.png')
-                enemy2 = Person(1000, 500, random.randint(0,3), 'enemy.png')
+                enemy1 = Person(1000, 250, 1, 'enemy.png')
+                enemy2 = Person(1000, 500, 1, 'enemy.png')
                 allplayers.append(enemy1)
                 allplayers.append(enemy2)
 
-        if score > 29 and score % 30 == 0 and score != lastadd: #добавление противников каждые 30 очков
+        if score > 14 and score % 15 == 0 and score != lastadd: #добавление противников каждые 30 очков
             try:
                 globals()['enemy' + str(enemynum)]
             except KeyError:
-                globals()['enemy' + str(enemynum)] = Person(random.randint(0,1200),random.randint(0,650),random.randint(0,3),'enemy.png');
+                globals()['enemy' + str(enemynum)] = Person(random.randint(0,1200),random.randint(0,650),random.randint(1,2),'enemy.png');
                 allplayers.append(globals()['enemy' + str(enemynum)])
-                enemynum+=1
+                enemynum += 1
                 lastadd = score
 
         #вычисление количества очков
@@ -92,14 +91,14 @@ while mainLoop: #игровой цикл
 
         #управление персонажем
         keys_pressed = pygame.key.get_pressed()
-        if keys_pressed[K_d] and player.x < 1216:
-            player.x += player.speed
-        if keys_pressed[K_a] and player.x > 0:
-            player.x -= player.speed
-        if keys_pressed[K_w] and player.y > 0:
+        if (keys_pressed[K_UP] or keys_pressed[K_w]) and player.y > 0:
             player.y -= player.speed
-        if keys_pressed[K_s] and player.y < 656:
+        if (keys_pressed[K_DOWN] or keys_pressed[K_s]) and player.y < 656:
             player.y += player.speed
+        if (keys_pressed[K_RIGHT] or keys_pressed[K_d]) and player.x < 1216:
+            player.x += player.speed
+        if (keys_pressed[K_LEFT] or keys_pressed[K_a]) and player.x > 0:
+            player.x -= player.speed
 
         screen.blit(abouttext, (3, 695))
         screen.blit(scoretext, (1200, 15))
@@ -112,8 +111,8 @@ while mainLoop: #игровой цикл
         key_press = pygame.key.get_pressed()
         #новая игра
         if key_press[K_RETURN]:
-            time0=time.time()
-            time1=time.time()
+            time0 = time.time()
+            time1 = time.time()
             score = 0
             for i in range(1,enemynum):
                 del globals()['enemy'+str(i)]
