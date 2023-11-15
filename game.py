@@ -4,19 +4,21 @@ import time
 from pygame.locals import *
 
 
-class Person:  # описание класса игрового объекта
+# описание класса игрового объекта
+class Character:
     def __init__(self, x, y, speed):
         self.x = x
         self.y = y
         self.speed = speed
 
 
-class Enemy(Person):
+class Enemy(Character):
     def __init__(self, x, y, speed):
         super().__init__(x, y, speed)
         self.image = pygame.image.load('enemy.png')
 
-    def move(self):  # метод преследования игрока
+    # метод преследования игрока
+    def move(self):
         if self.x < player.x:
             self.x += self.speed
         elif self.x > player.x:
@@ -27,22 +29,23 @@ class Enemy(Person):
             self.y -= self.speed
 
         # проверка окончания игры
-        global gameovercheck
+        global game_over_flag
         # проверка столкновения
-        if self.x <= player.x + 64 and self.x >= player.x and self.y >= player.y and self.y <= player.y + 64:
-            gameovercheck = True
-            screen.blit(gameover, (0, 0))
-        if self.x + 64 <= player.x + 64 and self.x + 64 >= player.x and self.y + 64 >= player.y and self.y + 64 <= player.y + 64:
-            gameovercheck = True
-            screen.blit(gameover, (0, 0))
+        if player.x + 64 >= self.x >= player.x and player.y <= self.y <= player.y + 64:
+            game_over_flag = True
+            screen.blit(game_over, (0, 0))
+        if player.x + 64 >= self.x + 64 >= player.x and player.y <= self.y + 64 <= player.y + 64:
+            game_over_flag = True
+            screen.blit(game_over, (0, 0))
 
 
-class Player(Person):
+class Player(Character):
     def __init__(self, x, y, speed):
         super().__init__(x, y, speed)
         self.image = pygame.image.load('player.png')
 
-    def move(self):  # управление персонажем
+    # управление персонажем
+    def move(self):
         keys_pressed = pygame.key.get_pressed()
         if (keys_pressed[K_UP] or keys_pressed[K_w]) and self.y > 0:
             self.y -= self.speed
@@ -54,71 +57,77 @@ class Player(Person):
             self.x -= self.speed
 
 
-pygame.init()  # инициализация игры, отрисовка окна
+# инициализация игры, отрисовка окна
+pygame.init()
 screen = pygame.display.set_mode((1280, 720), 0, 32)
 pygame.display.set_caption("First Python Game!")
 back = pygame.image.load('back.png')
-gameover = pygame.image.load('gameover.png')
+game_over = pygame.image.load('gameover.png')
 
 font = pygame.font.Font(None, 25)
-scorefont = pygame.font.Font(None, 60)
-score = 0  # количество очков
-gameovercheck = False  # окончание игры
-time0 = time.time()
+score_font = pygame.font.Font(None, 60)
 
-enemynum = 3
-lastadd = 0
+# количество очков
+score = 0
+score_text = score_font.render(str(score), True, (255, 255, 255))
 
-player = Player(100, 320, 5)  # инициализация игрwaока
-allplayers = [player]  # список игровых объектов
+# окончание игры
+game_over_flag = False
+time_start = time.time()
+last_add = 0
 
-abouttext = font.render("GitHub: stepigor. Version 1.0.", True, (255, 255, 255))
+# инициализация игрока
+player = Player(100, 320, 5)
+
+# список игровых объектов
+characters = [player]
+
+about_text = font.render("GitHub: stepigor. Version 1.0.", True, (255, 255, 255))
 
 mainLoop = True
-while mainLoop:  # игровой цикл
+# игровой цикл
+while mainLoop:
+    if not game_over_flag:
 
-    if gameovercheck == False:
+        if score == 3 and score != last_add:
+            characters.append(Enemy(1000, 250, 1))
+            characters.append(Enemy(1000, 750, 1))
+            last_add = score
 
-        if score == 3 and score != lastadd:
-            allplayers.append(Enemy(1000, 250, 1))
-            allplayers.append(Enemy(1000, 750, 1))
-            lastadd = score
-
-        if score > 14 and score % 15 == 0 and score != lastadd:  # добавление противников каждые 30 очков
-            allplayers.append(Enemy(random.randint(0, 1200), random.randint(0, 650),
-                                                       random.randint(1, 2)))
-            enemynum += 1
-            lastadd = score
+        # добавление противников каждые 15 очков
+        if score > 14 and score % 15 == 0 and score != last_add:
+            characters.append(Enemy(random.randint(0, 1200), random.randint(0, 650),
+                                    random.randint(1, 2)))
+            last_add = score
 
         # вычисление количества очков
-        time1 = time.time()
-        score = int(time1 - time0)
-        scoretext = scorefont.render(str(score), True, (255, 255, 255))
+        time_now = time.time()
+        score = int(time_now - time_start)
+        score_text = score_font.render(str(score), True, (255, 255, 255))
 
         screen.blit(back, (0, 0))
         # отрисовка игровых объектов
-        for item in allplayers:
+        for item in characters:
             screen.blit(item.image, (item.x, item.y))
             item.move()
 
-        screen.blit(abouttext, (3, 695))
-        screen.blit(scoretext, (1200, 15))
+        screen.blit(about_text, (3, 695))
+        screen.blit(score_text, (1200, 15))
 
     else:
         # отрисовка проигрыша
-        screen.blit(gameover, (0, 0))
-        screen.blit(scoretext, (122, 400))
+        screen.blit(game_over, (0, 0))
+        screen.blit(score_text, (122, 400))
 
         key_press = pygame.key.get_pressed()
         # новая игра
         if key_press[K_RETURN]:
-            time0 = time.time()
-            time1 = time.time()
+            time_start = time.time()
+            time_now = time.time()
             score = 0
-            lastadd = 0
-            enemynum = 3
-            allplayers = [player]
-            gameovercheck = False
+            last_add = 0
+            characters = [player]
+            game_over_flag = False
 
     for event in pygame.event.get():
         if event.type == QUIT:
