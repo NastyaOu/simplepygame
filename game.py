@@ -79,26 +79,16 @@ while mainLoop:  # игровой цикл
 
     if gameovercheck == False:
 
-        if score == 3:
-            try:
-                enemy1
-                enemy2
-            except:
-                # создание первых противников
-                enemy1 = Enemy(1000, 250, 1)
-                enemy2 = Enemy(1000, 500, 1)
-                allplayers.append(enemy1)
-                allplayers.append(enemy2)
+        if score == 3 and score != lastadd:
+            allplayers.append(Enemy(1000, 250, 1))
+            allplayers.append(Enemy(1000, 750, 1))
+            lastadd = score
 
         if score > 14 and score % 15 == 0 and score != lastadd:  # добавление противников каждые 30 очков
-            try:
-                globals()['enemy' + str(enemynum)]
-            except KeyError:
-                globals()['enemy' + str(enemynum)] = Enemy(random.randint(0, 1200), random.randint(0, 650),
-                                                           random.randint(1, 2))
-                allplayers.append(globals()['enemy' + str(enemynum)])
-                enemynum += 1
-                lastadd = score
+            allplayers.append(Enemy(random.randint(0, 1200), random.randint(0, 650),
+                                                       random.randint(1, 2)))
+            enemynum += 1
+            lastadd = score
 
         # вычисление количества очков
         time1 = time.time()
@@ -125,8 +115,6 @@ while mainLoop:  # игровой цикл
             time0 = time.time()
             time1 = time.time()
             score = 0
-            for i in range(1, enemynum):
-                del globals()['enemy' + str(i)]
             lastadd = 0
             enemynum = 3
             allplayers = [player]
